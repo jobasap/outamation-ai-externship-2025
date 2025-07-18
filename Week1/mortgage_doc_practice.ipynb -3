@@ -1,0 +1,247 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": [],
+      "authorship_tag": "ABX9TyOUxhgpUIOM6CjyM6NGSXTT",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/jobasap/outamation-ai-externship-2025/blob/main/Week1/mortgage_doc_practice.ipynb%20-3\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 7,
+      "metadata": {
+        "id": "zzKzIk7zEdbA",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "outputId": "32f8d4fa-b739-4401-beb1-c73a77b0787c"
+      },
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Borrower Names: ['John K. Williams', 'Maria L. Williams']\n",
+            "Loan Date: ['03/12/2024']\n",
+            "Monthly Income: ['$5,600']\n",
+            "Account Number: ['345679875432']\n"
+          ]
+        }
+      ],
+      "source": [
+        "import re\n",
+        "\n",
+        "# Simulated unstructured mortgage document (text)\n",
+        "\n",
+        "mortgage_text = \"\"\"\n",
+        "\n",
+        "John K. Williams applied for a loan on 03/12/2024 with a monthly income of $5,600.\n",
+        "His spouse, Maria L. Williams, is listed as a co-borrower. Their address is 124 Maple St, Austin, TX 78701.\n",
+        "The account number is 345679875432 and routing number is 021000021.\n",
+        "Contact email is john.williams@mortgageusa.com and phone number is (512) 555-2398.\n",
+        "SSN is 123-45-6789 and document ID is DOC-45678.\n",
+        "\"\"\"\n",
+        "\n",
+        "# Extract names using a pattern (first and last name)\n",
+        "names = re.findall(r'[A-Z][a-z]+\\s[A-Z]\\.\\s[A-Z][a-z]+', mortgage_text)\n",
+        "\n",
+        "# Extract dates\n",
+        "dates = re.findall(r'\\d{2}/\\d{2}/\\d{4}', mortgage_text)\n",
+        "\n",
+        "# Extract income\n",
+        "income = re.findall(r'\\$\\d{1,3}(?:,\\d{3})*(?:\\.\\d{2})?', mortgage_text)\n",
+        "\n",
+        "# Extract account numbers\n",
+        "accounts = re.findall(r'\\b\\d{12}\\b', mortgage_text)\n",
+        "\n",
+        "print(\"Borrower Names:\", names)\n",
+        "print(\"Loan Date:\", dates)\n",
+        "print(\"Monthly Income:\", income)\n",
+        "print(\"Account Number:\", accounts)\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Extract routing numbers (9-digit)\n",
+        "routing_numbers = re.findall(r'\\b\\d{9}\\b', mortgage_text)\n",
+        "\n",
+        "# Extract SSNs (format: xxx-xx-xxxx)\n",
+        "ssns = re.findall(r'\\b\\d{3}-\\d{2}-\\d{4}\\b', mortgage_text)\n",
+        "\n",
+        "# Extract email addresses\n",
+        "emails = re.findall(r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}', mortgage_text)\n",
+        "\n",
+        "# Extract phone numbers (formats: (123) 456-7890 or 123-456-7890)\n",
+        "phones = re.findall(r'\\(?\\d{3}\\)?[-.\\s]?\\d{3}[-.\\s]?\\d{4}', mortgage_text)\n",
+        "\n",
+        "# Extract address (basic street address pattern)\n",
+        "addresses = re.findall(r'\\d{1,5}\\s[\\w\\s]+(?:Street|St|Avenue|Ave|Road|Rd|Lane|Ln|Drive|Dr|Boulevard|Blvd),?\\s\\w+,?\\s\\w{2}\\s\\d{5}', mortgage_text)\n",
+        "\n",
+        "# Extract document/loan IDs (e.g., DOC-12345, LN-00088)\n",
+        "doc_ids = re.findall(r'\\b(?:DOC|LN|LOAN)-\\d{5,7}\\b', mortgage_text)\n",
+        "\n",
+        "print(\"\\nRouting Numbers:\", routing_numbers)\n",
+        "print(\"SSNs:\", ssns)\n",
+        "print(\"Email Addresses:\", emails)\n",
+        "print(\"Phone Numbers:\", phones)\n",
+        "print(\"Street Addresses:\", addresses)\n",
+        "print(\"Document IDs:\", doc_ids)\n"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "9zw2gn6THzHa",
+        "outputId": "46937a08-6895-4d73-a9b8-5fbfd44dd881"
+      },
+      "execution_count": 8,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "\n",
+            "Routing Numbers: ['021000021']\n",
+            "SSNs: ['123-45-6789']\n",
+            "Email Addresses: ['john.williams@mortgageusa.com']\n",
+            "Phone Numbers: ['3456798754', '(512) 555-2398']\n",
+            "Street Addresses: ['124 Maple St, Austin, TX 78701']\n",
+            "Document IDs: ['DOC-45678']\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Create a structured dictionary of extracted fields\n",
+        "extracted_data = {\n",
+        "    \"borrower_names\": names,\n",
+        "    \"loan_date\": dates,\n",
+        "    \"monthly_income\": income,\n",
+        "    \"account_number\": accounts,\n",
+        "    \"routing_number\": routing_numbers,\n",
+        "    \"ssn\": ssns,\n",
+        "    \"email\": emails,\n",
+        "    \"phone_number\": phones,\n",
+        "    \"address\": addresses,\n",
+        "    \"document_ids\": doc_ids\n",
+        "}\n",
+        "\n",
+        "# Print as a clean dictionary\n",
+        "print(\"\\n📦 Structured Extracted Data:\")\n",
+        "for key, value in extracted_data.items():\n",
+        "    print(f\"{key}: {value}\")\n"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "YHU-QzURJJZR",
+        "outputId": "e074341d-3645-432e-ee3d-815ea738939a"
+      },
+      "execution_count": 10,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "\n",
+            "📦 Structured Extracted Data:\n",
+            "borrower_names: ['John K. Williams', 'Maria L. Williams']\n",
+            "loan_date: ['03/12/2024']\n",
+            "monthly_income: ['$5,600']\n",
+            "account_number: ['345679875432']\n",
+            "routing_number: ['021000021']\n",
+            "ssn: ['123-45-6789']\n",
+            "email: ['john.williams@mortgageusa.com']\n",
+            "phone_number: ['3456798754', '(512) 555-2398']\n",
+            "address: ['124 Maple St, Austin, TX 78701']\n",
+            "document_ids: ['DOC-45678']\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import json\n",
+        "print(\"\\n🧾 JSON-style Output:\")\n",
+        "print(json.dumps(extracted_data, indent=4))\n"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "COynar-MNejs",
+        "outputId": "24a00e23-6bac-47e0-f4c7-bdc5e25e7468"
+      },
+      "execution_count": 11,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "\n",
+            "🧾 JSON-style Output:\n",
+            "{\n",
+            "    \"borrower_names\": [\n",
+            "        \"John K. Williams\",\n",
+            "        \"Maria L. Williams\"\n",
+            "    ],\n",
+            "    \"loan_date\": [\n",
+            "        \"03/12/2024\"\n",
+            "    ],\n",
+            "    \"monthly_income\": [\n",
+            "        \"$5,600\"\n",
+            "    ],\n",
+            "    \"account_number\": [\n",
+            "        \"345679875432\"\n",
+            "    ],\n",
+            "    \"routing_number\": [\n",
+            "        \"021000021\"\n",
+            "    ],\n",
+            "    \"ssn\": [\n",
+            "        \"123-45-6789\"\n",
+            "    ],\n",
+            "    \"email\": [\n",
+            "        \"john.williams@mortgageusa.com\"\n",
+            "    ],\n",
+            "    \"phone_number\": [\n",
+            "        \"3456798754\",\n",
+            "        \"(512) 555-2398\"\n",
+            "    ],\n",
+            "    \"address\": [\n",
+            "        \"124 Maple St, Austin, TX 78701\"\n",
+            "    ],\n",
+            "    \"document_ids\": [\n",
+            "        \"DOC-45678\"\n",
+            "    ]\n",
+            "}\n"
+          ]
+        }
+      ]
+    }
+  ]
+}
